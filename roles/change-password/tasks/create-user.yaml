@@ -1,0 +1,8 @@
+---
+# create new user
+- name: creating user {{ username }}
+  user:
+    name: "{{ username }}"
+    password: "{{ lookup('password', 'passwords/{{ inventory_hostname }}-latest chars=ascii_letters,digits encrypt=sha512_crypt length=14')}}"
+    shell: /bin/bash
+    comment: This user is for administration team

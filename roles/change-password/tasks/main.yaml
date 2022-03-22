@@ -1,0 +1,17 @@
+---
+# check if specific user exists
+- name: check user existence
+  shell:
+    cmd: "id -u {{ username }}"
+  register: user
+  ignore_errors: true
+
+# include task to create user if it does not exist
+- name: user {{ username }} does not exist | creating user
+  include_tasks: create-user.yaml
+  when: user.rc == 1
+
+# include task to reset password if it exists
+- name: user {{ username }} exists | reseting password
+  include_tasks: reset-passwd.yaml
+  when: user.rc == 0

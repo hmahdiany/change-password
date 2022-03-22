@@ -1,0 +1,35 @@
+---
+# get current time of execution to use in archive task
+- name: set fact | current time
+  become: false
+  delegate_to: localhost
+  set_fact:
+    date: "{{ lookup('pipe', 'date +%Y\/%m\/%d-%H:%M')}}"
+
+# archive previous password before reset it
+- name: archive previous password
+  become: false
+  delegate_to: localhost
+  blockinfile:
+    path: passwords/archive/{{ inventory_hostname }}
+    create: yes
+    marker: "{mark}"
+    marker_begin: "user's password at {{ date }}"
+    marker_end: "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    block: |
+      password: {{ item }}
+  with_items:
+    - "{{ lookup('file', 'passwords/{{inventory_hostname}}-latest')}}"
+
+# clear latest password file to generate new one
+- name: clear latest password in passwords/{{ inventory_hostname }}-latest
+  become: false
+  delegate_to: localhost
+  file:
+    path: passwords/{{ inventory_hostname }}-latest
+    state: absent
+
+- name: reseting password for {{ username }}
+  user:
+    name: "{{ username }}"
+    password: "{{ lookup('password', 'passwords/{{ inventory_hostname }}-latest chars=ascii_letters,digits encrypt=sha512_crypt length=14')}}"
