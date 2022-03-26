@@ -5,4 +5,7 @@
     name: "{{ username }}"
     password: "{{ lookup('password', 'passwords/{{ inventory_hostname }}-latest chars=ascii_letters,digits encrypt=sha512_crypt length=14')}}"
     shell: /bin/bash
+    groups: "{{ item }}"
+    append: yes
     comment: This user is for administration team
+  loop: "{{ secondaryGroups }}"

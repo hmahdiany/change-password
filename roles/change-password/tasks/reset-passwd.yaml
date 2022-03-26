@@ -29,6 +29,7 @@
     path: passwords/{{ inventory_hostname }}-latest
     state: absent
 
+# reset user's password
 - name: reseting password for {{ username }}
   user:
     name: "{{ username }}"

@@ -1,1 +1,13 @@
-username: king
+# login username
+username: backbone
+
+# list of groups user will be added to.
+# if set to '' the user is removed from all groups except the primary group
+# example
+# secondaryGroups:
+#   - sudo
+#   - docker
+secondaryGroups: 
+  - sudo
+  - docker
+  
